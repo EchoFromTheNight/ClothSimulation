@@ -2,13 +2,16 @@
  * Author : Ph. Meseure
  * Institute : University of Poitiers
  */
- 
+
 // General function to compute the force exerted by a spring
 // ---------------------------------------------------------
 function computeSpring(x1,x2,stiffness,length0)
 { // returned force should be applied to x1
-  var u=vec3.create();
-  /* to complete */
+  var u = vec3.create();
+  vec3.subtract(x2,x1,u);
+  var norm = vec3.length(u);
+  var f = stiffness * (1-length0/norm);
+  vec3.scale(u,f/1);
   return u;
 }
 
@@ -34,10 +37,10 @@ function Cloth(texturefile,_mass,_damp,_xsize,_ysize,_nbx,_nby,_envi)
   this.nby=_nby;
   this.envi=_envi;
   this.init(_mass,_damp,_xsize,_ysize);
-  this.initSprings(_xsize,_ysize);  
+  this.initSprings(_xsize,_ysize);
   this.initGfx(texturefile);
 }
-  
+
 
 /*
  * Construction of the model
@@ -69,7 +72,7 @@ Cloth.prototype.init = function(mass,damp,xsize,ysize)
     this.particles[i][this.nbx].mass=patchmass/2.0;
     this.particles[i][0].damping=damp/2.0;
     this.particles[i][this.nbx].damping=damp/2.0;
-    
+
   }
   for(var j=1;j<=this.nbx-1;j++)
   {
@@ -145,13 +148,13 @@ Cloth.prototype.updateGeometry = function ()
       vec3.add(this.centers[i][j].normal,n);
       vec3.add(this.particles[i][j+1].normal,n);
       vec3.add(this.particles[i+1][j+1].normal,n);
-      
+
       computeFaceNormal(this.centers[i][j].position,
         this.particles[i+1][j+1].position,this.particles[i+1][j].position,n);
       vec3.add(this.centers[i][j].normal,n);
       vec3.add(this.particles[i+1][j+1].normal,n);
       vec3.add(this.particles[i+1][j].normal,n);
-      
+
       computeFaceNormal(this.centers[i][j].position,
         this.particles[i+1][j].position,this.particles[i][j].position,n);
       vec3.add(this.centers[i][j].normal,n);
@@ -169,7 +172,7 @@ Cloth.prototype.updateGeometry = function ()
     for(var j=0;j<this.nbx;j++)
     {
       vec3.normalize(this.centers[i][j].normal);
-    }    
+    }
 }
 
 
@@ -183,7 +186,7 @@ Cloth.prototype.initSprings=function(xsize,ysize)
 {
   var xpatch=xsize/this.nbx;
   var ypatch=ysize/this.nby;
-  
+
   this.xstretch_k=50; this.xstretch_l0=xpatch;
   this.ystretch_k=50; this.ystretch_l0=ypatch;
   this.shear_k=10;
@@ -191,7 +194,7 @@ Cloth.prototype.initSprings=function(xsize,ysize)
   this.xbend_k=50; this.xbend_l0=2.0*xpatch;
   this.ybend_k=50; this.ybend_l0=2.0*ypatch;
 }
-  
+
 /*
  * Internal forces computation
  * ---------------------------
@@ -215,10 +218,10 @@ Cloth.prototype.computeSprings = function()
   }
   // Second step : stretch springs along y
   // To complete
-  
+
   // Third step : shear springs
   // To complete
-  
+
   // Fourth step : bend springs along x
   // To complete
 
@@ -273,7 +276,7 @@ Cloth.prototype.initGfx=function(texturefile)
   var nbcenters=this.nby*this.nbx;
   this.vertexdata=new Float32Array(3*(nbparticles+nbcenters));
   this.vertices = gl.createBuffer();
-  
+
   // normal array and Webgl buffer allocation
   this.normaldata = new Float32Array(this.vertexdata.length);
   this.normals = gl.createBuffer();
@@ -301,7 +304,7 @@ Cloth.prototype.initGfx=function(texturefile)
   gl.bindBuffer(gl.ARRAY_BUFFER, this.textcoords);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texdata), gl.STATIC_DRAW);
   this.texture=initTexture(texturefile);
-    
+
   // Face array
   var facedata = [];
   for(var i=0;i<this.nby;i++)
@@ -316,7 +319,7 @@ Cloth.prototype.initGfx=function(texturefile)
 /*    facedata.push(i*(this.nbx+1)+j);
       facedata.push(i*(this.nbx+1)+j+1);
       facedata.push((i+1)*(this.nbx+1)+j+1);
-      
+
       facedata.push(i*(this.nbx+1)+j);
       facedata.push((i+1)*(this.nbx+1)+j+1);
       facedata.push((i+1)*(this.nbx+1)+j); */
@@ -332,7 +335,7 @@ Cloth.prototype.initGfx=function(texturefile)
       facedata.push(center_ind);
       facedata.push(i*(this.nbx+1)+j+1);
       facedata.push((i+1)*(this.nbx+1)+j+1);
-      
+
       facedata.push(center_ind);
       facedata.push((i+1)*(this.nbx+1)+j+1);
       facedata.push((i+1)*(this.nbx+1)+j);
@@ -367,7 +370,7 @@ Cloth.prototype.draw = function ()
         this.vertexdata[ind+k]=this.particles[i][j].position[k];
         this.normaldata[ind+k]=this.particles[i][j].normal[k];
       }
-      ind+=3;      
+      ind+=3;
     }
   }
   // Update arrays with new patch centers' positions and normals
@@ -414,7 +417,7 @@ Cloth.prototype.draw = function ()
   gl.cullFace(gl.BACK); // return to backface culling
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
   gl.drawElements(gl.TRIANGLES, this.indices.numitems, gl.UNSIGNED_SHORT, 0);
-  
+
   setTexturing(false);
 }
 
@@ -430,7 +433,7 @@ Cloth.prototype.drawParticles = function(curmatrix)
   for(var i=0;i<=this.nby;i++)
   {
     for(var j=0;j<=this.nbx;j++)
-    {    
+    {
       pushMatrix(curmatrix);
       {
         mat4.translate(curmatrix,this.particles[i][j].position);
