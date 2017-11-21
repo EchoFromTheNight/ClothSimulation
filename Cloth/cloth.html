@@ -1,0 +1,29 @@
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--
+  Author : Ph. Meseure
+  Institution : University of Poitiers
+-->
+  <head>
+    <title>Cloth Simulation</title>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+
+    <script type="text/javascript" src="../lib/glMatrix-0.9.5.js"></script>
+    <script type="text/javascript" src="../lib/webgl-utils.js"></script>
+    <script type="text/javascript" src="gouraudtextureshaders.js"></script>
+    <script type="text/javascript" src="graphics.js"></script>
+    <script type="text/javascript" src="ClothPoint.js"></script>
+    <script type="text/javascript" src="Particle.js"></script>
+    <script type="text/javascript" src="Cloth.js"></script>
+    <script type="text/javascript" src="Simulation.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </head>
+
+  <body onload="startSimul();">
+    <h2>Cloth Animation</h2>
+    <canvas id="webglcanvas" style="border: none;" width="500" height="500"></canvas>
+  </body>
+
+</html>
