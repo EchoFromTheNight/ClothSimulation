@@ -255,9 +255,33 @@ Cloth.prototype.computeSprings = function()
   }
   // Fourth step : bend springs along x
   // To complete
+  for(var i=0;i<=this.nby;i++)
+  {
+    for(var j=0;j<this.nbx-1;j++)
+    {
+      force=computeSpring(this.particles[i][j].position,
+                          this.particles[i][j+2].position,
+                          this.xbend_k,
+                          this.xbend_l0);
+      vec3.add(this.particles[i][j].internalforces,force);
+      vec3.subtract(this.particles[i][j+2].internalforces,force);
+    }
+  }
 
   // Fifth step : bend springs along y
   // To complete
+  for(var i=0;i<this.nby-1;i++)
+  {
+    for(var j=0;j<=this.nbx;j++)
+    {
+      force=computeSpring(this.particles[i][j].position,
+                          this.particles[i+2][j].position,
+                          this.ybend_k,
+                          this.ybend_l0);
+      vec3.add(this.particles[i][j].internalforces,force);
+      vec3.subtract(this.particles[i+2][j].internalforces,force);
+    }
+  }
 }
 
 /*
