@@ -218,6 +218,18 @@ Cloth.prototype.computeSprings = function()
   }
   // Second step : stretch springs along y
   // To complete
+  for(var i=0;i<this.nby;i++)
+  {
+    for(var j=0;j<=this.nbx;j++)
+    {
+      force=computeSpring(this.particles[i][j].position,
+                          this.particles[i+1][j].position,
+                          this.ystretch_k,
+                          this.ystretch_l0);
+      vec3.add(this.particles[i][j].internalforces,force);
+      vec3.subtract(this.particles[i+1][j].internalforces,force);
+    }
+  }
 
   // Third step : shear springs
   // To complete
